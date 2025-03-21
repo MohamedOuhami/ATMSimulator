@@ -1,0 +1,35 @@
+﻿<Window x:Class="ATMSimulator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ATMSimulator"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Button Content="1" HorizontalAlignment="Left" Margin="98,295,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="2" HorizontalAlignment="Left" Margin="148,295,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="3" HorizontalAlignment="Left" Margin="198,295,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="4" HorizontalAlignment="Left" Margin="98,243,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="5" HorizontalAlignment="Left" Margin="148,243,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="6" HorizontalAlignment="Left" Margin="198,243,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="7" HorizontalAlignment="Left" Margin="98,192,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="8" HorizontalAlignment="Left" Margin="148,192,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="9" HorizontalAlignment="Left" Margin="198,192,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="." HorizontalAlignment="Left" Margin="98,348,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="0" HorizontalAlignment="Left" Margin="148,348,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="00" HorizontalAlignment="Left" Margin="198,348,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="30" Background="#FFE8E8E8"/>
+        <Button Content="Cancel" HorizontalAlignment="Left" Margin="249,192,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="70" Background="#FFFF1B1B"/>
+        <Button Content="Correct" HorizontalAlignment="Left" Margin="249,243,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="70" Background="#FFF3FF1B"/>
+        <Button Content="Confirm" HorizontalAlignment="Left" Margin="249,295,0,0" VerticalAlignment="Top" Click="Button_Click" Height="38" Width="70" Background="#FF00FF4A"/>
+        <Rectangle HorizontalAlignment="Left" Height="130" Margin="98,44,0,0" Stroke="Black" VerticalAlignment="Top" Width="221" Fill="#FFDADADA"/>
+        <Button Content="Insert Card" HorizontalAlignment="Left" Margin="624,69,0,0" VerticalAlignment="Top" Height="38" Width="104"/>
+        <Button Content="Withdraw Money" HorizontalAlignment="Left" Margin="624,134,0,0" VerticalAlignment="Top" Height="38" Width="104" Click="Button_Click_1" BorderBrush="Black"/>
+        <Button Content="Take Card" HorizontalAlignment="Left" Margin="624,0,0,0" VerticalAlignment="Center" Height="38" Width="104" Click="Button_Click_1" BorderBrush="Black"/>
+        <Label Content="Server Response" HorizontalAlignment="Left" Margin="423,31,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="199" Margin="370,69,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="234" BorderBrush="Black"/>
+        <Label Content="ATM Response" HorizontalAlignment="Left" Margin="423,270,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="85" Margin="370,301,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="234" BorderBrush="Black"/>
+
+    </Grid>
+</Window>
