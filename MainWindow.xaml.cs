@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
@@ -14,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ATMSimulator.models;
+using ATMSimulator.services;
 using Newtonsoft.Json;
 
 namespace ATMSimulator
@@ -23,6 +26,9 @@ namespace ATMSimulator
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Injecting the services
+        private readonly CardService _cardService;
+        private readonly AccountService _accountService;
 
         private readonly string cardNumber = "4111111111111111";
         private Card card;
@@ -35,6 +41,10 @@ namespace ATMSimulator
         public MainWindow()
         {
             InitializeComponent();
+
+            // Inject the service
+            _cardService = new CardService();
+            _accountService = new AccountService();
 
             // Disable the card at first 
             disablePAD();
@@ -142,54 +152,43 @@ namespace ATMSimulator
             if (PinScreen.Visibility == Visibility.Visible)
             {
 
-                if (permissibleTrials > 3)
-                {
-
-                }
                 if (PinEntry.Password.Length == 4)
                 {
 
-                    // Sending the request with the cardNumber and the cardPIN
                     try
                     {
-                        using (HttpClient httpClient = new HttpClient())
+                        // Sending the request with the cardNumber and the cardPIN
+                        var (responseBody, statusCode) = await _cardService.validatePIN(cardNumber, PinEntry.Password);
+
+                        // If we get an OK, we show the card info
+                        if (statusCode == HttpStatusCode.OK)
                         {
-                            // Setup the apiUrl template
-                            string apiUrl = $"http://localhost:5191/api/Cards/{cardNumber}?cardPIN={PinEntry.Password}";
+                            // Assuming you have logic to update the UI
+                            ServerResponse.Text = "The card Info: \n" + responseBody;
 
-                            // Send a get request to the API
-                            HttpResponseMessage responseMessage = await httpClient.GetAsync(apiUrl);
+                            card = System.Text.Json.JsonSerializer.Deserialize<Card>(responseBody);
 
-                            // Get the response message
-                            string responseBody = await responseMessage.Content.ReadAsStringAsync();
-
-                            // If we get an OK, we show the card Info
-                            if (responseMessage.IsSuccessStatusCode)
-                            {
-                                ServerResponse.Text = "The card Info" + responseBody;
-                                card = System.Text.Json.JsonSerializer.Deserialize<Card>(responseBody);
-                                showAccountScreen();
-
-                            }
-                            else if (responseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
-                            {
-                                ServerResponse.Text = "The card was not found in the core banking";
-
-
-                            }
-                            else if (responseMessage.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                            {
-                                ServerResponse.Text = "Incorrect PIN";
-                                permissibleTrials--;
-
-                            }
+                            showAccountScreen();
                         }
-
-
+                        else if (statusCode == HttpStatusCode.NotFound)
+                        {
+                            ServerResponse.Text = "The card was not found in the core banking system.";
+                        }
+                        else if (statusCode == HttpStatusCode.BadRequest)
+                        {
+                            ServerResponse.Text = "Incorrect PIN.";
+                        }
+                        else
+                        {
+                            // For other unexpected status codes
+                            ServerResponse.Text = $"Unexpected error occurred: {statusCode}. Please try again later.";
+                        }
                     }
                     catch (Exception ex)
                     {
-                        ServerResponse.Text = ex.Message;
+                        // Handle exceptions from the calling method
+                        ServerResponse.Text = $"An error occurred: {ex.Message}";
+                        System.Diagnostics.Debug.WriteLine($"Exception in HandlePinValidation: {ex.Message}");
                     }
                 }
                 else
@@ -247,6 +246,7 @@ namespace ATMSimulator
 
         private async void ConfirmWithdraw_Click(object sender, RoutedEventArgs e)
         {
+            // Validate the amount input
             if (!decimal.TryParse(AmountEntry.Text, out decimal amount) || amount <= 0)
             {
                 MessageBox.Show("Please enter a valid positive amount.");
@@ -255,37 +255,30 @@ namespace ATMSimulator
 
             try
             {
-                using (var client = new HttpClient())
+                // Attempt to withdraw money
+                (WithdrawalResult? withdrawResult, HttpStatusCode statusCode) =
+                    await _accountService.WithdrawMoney(selectedAccountNumber, amount);
+
+                if (statusCode == HttpStatusCode.OK && withdrawResult != null)
                 {
-
-                    var response = await client.PostAsJsonAsync(
-                        $"http://localhost:5191/api/Accounts/{selectedAccountNumber}/withdraw",
-                        amount);
-
-                    MessageBox.Show($"http://localhost:5191/api/Accounts/{selectedAccountNumber}/withdraw");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var result = await response.Content.ReadFromJsonAsync<WithdrawalResult>();
-                        selectedAccountBalance = result.NewBalance;
-                        showOperationScreen();
-                    }
-                    else
-                    {
-                        var error = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show($"Error: {error}");
-                    }
+                    selectedAccountBalance = withdrawResult.NewBalance;
+                    PDFCreatorOperations.CreateWithdrawalReceipt(selectedAccountNumber, amount, selectedAccountBalance, selectedAccountCurrency);
+                    showOperationScreen();
                 }
-
+                else
+                {
+                    MessageBox.Show($"Transaction failed. Status Code: {statusCode}");
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Network error: {ex.Message}");
             }
 
+            // Clear the amount entry field
             AmountEntry.Text = "";
-
         }
+
 
         private void CancelOperation(object sender, RoutedEventArgs e)
         {
@@ -399,7 +392,21 @@ namespace ATMSimulator
             AccountsList.ItemsSource = accountItems;
         }
 
-        
+        private async void GetOperations(object sender, RoutedEventArgs e)
+        {
+            // Fetch the latest 5 operations for this account
+            (List<Operation> last5Operations, HttpStatusCode statusCode) = await _accountService.getLast5Operations(selectedAccountNumber);
+
+            if (last5Operations != null)
+            {
+                ServerResponse.Text = last5Operations[0].amount.ToString();
+                PDFCreatorOperations.CreateAtmOperationsReceipt(last5Operations, selectedAccountNumber,selectedAccountCurrency);
+            }
+            else
+            {
+                ServerResponse.Text = "No operations";
+            }
+        }
     }
         
 }

@@ -41,10 +41,12 @@
                         <StackPanel x:Name="OperationScreen" Visibility="Visible" VerticalAlignment="Center">
                             <Label Content="Select Operation" Foreground="White" FontSize="18" 
                                    HorizontalAlignment="Center" Margin="0,0,0,20"/>
-                            <Button Content="Check Balance" Width="180" Margin="0,5" Padding="10,5"
+                            <Button Content="Check Balance" Width="180" Padding="10,5"
                                     Click="CheckBalance_Click" Background="#4CAF50" Foreground="White"/>
                             <Button Content="Withdraw Cash" Width="180" Margin="0,5" Padding="10,5"
                                     Click="WithdrawCash_Click" Background="#2196F3" Foreground="White"/>
+                            <Button Content="Check Operations" Width="180" Margin="0,5" Padding="10,5"
+         Click="GetOperations" Background="#2A36D3" Foreground="White"/>
                             <Button Content="Exit" Width="180" Margin="0,5" Padding="10,5"
                                     Click="CancelOperation" Background="#F44336" Foreground="White"/>
                         </StackPanel>

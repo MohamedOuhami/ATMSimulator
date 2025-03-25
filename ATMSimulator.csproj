@@ -10,6 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PdfSharp" Version="6.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="utils\" />
+    <Folder Include="views\" />
   </ItemGroup>
 
 </Project>
