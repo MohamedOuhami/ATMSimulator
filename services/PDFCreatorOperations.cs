@@ -55,7 +55,11 @@ namespace ATMSimulator.services
             currentY += lineHeight;
 
             // Account information
-            gfx.DrawString($"ACCOUNT: {accountNumber}", mainFont, blackBrush, new XPoint(column1, currentY));
+            string maskedAccountNumber = accountNumber.Length > 8
+                ? $"{accountNumber.Substring(0, 4)}****{accountNumber.Substring(accountNumber.Length - 4)}"
+                : "****";  // If the account number is too short, hide it completely.
+
+            gfx.DrawString($"ACCOUNT: {maskedAccountNumber}", mainFont, blackBrush, new XPoint(column1, currentY));
             currentY += lineHeight;
 
             gfx.DrawString($"CURRENCY: {currency}", mainFont, blackBrush, new XPoint(column1, currentY));
@@ -154,7 +158,11 @@ namespace ATMSimulator.services
             currentY += lineHeight;
 
             // Account information
-            gfx.DrawString($"ACCOUNT: {accountNumber}", mainFont, blackBrush, new XPoint(column1, currentY));
+            string maskedAccountNumber = accountNumber.Length > 3
+                ? $"{accountNumber.Substring(0, 2)}****{accountNumber.Substring(accountNumber.Length - 4)}"
+                : "****"; 
+
+            gfx.DrawString($"ACCOUNT: {maskedAccountNumber}", mainFont, blackBrush, new XPoint(column1, currentY)); ;
             currentY += lineHeight;
 
             gfx.DrawString($"CURRENCY: {currency}", mainFont, blackBrush, new XPoint(column1, currentY));
